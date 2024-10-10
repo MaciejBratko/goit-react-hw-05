@@ -1,4 +1,4 @@
-import css from "./MovieDetailsPage.module.css"
+﻿import css from "./MovieDetailsPage.module.css"
 
 const MovieDetailsPage = () => {
     return (<></>);
