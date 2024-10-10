@@ -1,0 +1,22 @@
+.navContainer {
+  margin: 0;
+  width: 100%;
+  box-shadow: 0px 1px 5px black;
+}
+.nav {
+  padding: 0 30px;
+  height: 75px;
+  display: flex;
+  column-gap: 30px;
+  align-items: center;
+  font-size: 25px;
+}
+
+.navLink {
+  color: black;
+  text-decoration: none;
+}
+
+.navLink:last-child {
+  color: red;
+}

@@ -9,6 +9,7 @@
     "serve": "vite preview --open"
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "clsx": "^2.1.1",
     "goit-react-hw-01": "file:",
     "prop-types": "^15.8.1",
