@@ -2,4 +2,4 @@
   goit-react-hw-05</br>
   
 </h1>
-https://goit-react-hw-05-bxzojouzd-maciej-bratkos-projects.vercel.app/
+https://goit-react-hw-05-delta-kohl.vercel.app
