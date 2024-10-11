@@ -2,25 +2,25 @@
 import { useState, useEffect } from "react";
 import css from "./HomePage.module.css";
 import { fetchPopularMovies } from "../../API/apiServices";
+import useLoadingError from "../../hooks/useLoadingError";
 
 const MovieList = lazy(() => import("../../components/MovieList/MovieList"));
 
 const HomePage = () => {
   const [popularMovies, setPopularMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { isLoading, error, startLoading, stopLoading, setErrorMessage, clearError } = useLoadingError();
 
   useEffect(() => {
     const getPopularMovies = async () => {
-      setIsLoading(true);
-      setError(null);
+      startLoading();
+      clearError();
       try {
         const movies = await fetchPopularMovies();
         setPopularMovies(movies);
       } catch (err) {
-        setError(err.message);
+        setErrorMessage(err.message);
       } finally {
-        setIsLoading(false);
+        stopLoading();
       }
     };
 

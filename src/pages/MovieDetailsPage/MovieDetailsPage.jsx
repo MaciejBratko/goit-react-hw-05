@@ -3,27 +3,34 @@ import { useState, useEffect } from "react";
 import { useParams, useLocation, Link, Outlet } from "react-router-dom";
 import { fetchMovieDetails } from "../../API/apiServices";
 import css from "./MovieDetailsPage.module.css";
+import useLoadingError from "../../hooks/useLoadingError";
 
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
   const [movieDetails, setMovieDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const {
+    isLoading,
+    error,
+    startLoading,
+    stopLoading,
+    setErrorMessage,
+    clearError,
+  } = useLoadingError();
   const location = useLocation();
 
   const backLinkRef = location.state?.from ?? "/movies";
 
   useEffect(() => {
     const getMovieDetails = async () => {
-      setIsLoading(true);
-      setError(null);
+      startLoading();
+      clearError();
       try {
         const details = await fetchMovieDetails(movieId);
         setMovieDetails(details);
       } catch (err) {
-        setError(err.message);
+        setErrorMessage(err.message);
       } finally {
-        setIsLoading(false);
+        stopLoading();
       }
     };
 
@@ -43,7 +50,6 @@ const MovieDetailsPage = () => {
   if (!movieDetails) {
     return null;
   }
-
   return (
     <Suspense fallback={<div>Loading additional information...</div>}>
       <div className={css.movieDetailsPage}>

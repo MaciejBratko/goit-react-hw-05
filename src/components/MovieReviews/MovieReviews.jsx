@@ -2,17 +2,24 @@
 import { useParams } from "react-router-dom";
 import api from "../../API/api";
 import css from "./MovieReviews.module.css";
+import useLoadingError from "../../hooks/useLoadingError";
 
 const MovieReviews = () => {
   const { movieId } = useParams();
   const [reviews, setReviews] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const {
+    isLoading,
+    error,
+    startLoading,
+    stopLoading,
+    setErrorMessage,
+    clearError,
+  } = useLoadingError();
 
   useEffect(() => {
     const fetchReviews = async () => {
-      setIsLoading(true);
-      setError(null);
+      startLoading();
+      clearError();
       try {
         const response = await api.get(`/movie/${movieId}/reviews`, {
           params: {
@@ -22,10 +29,10 @@ const MovieReviews = () => {
         });
         setReviews(response.data.results);
       } catch (err) {
-        setError("Failed to fetch reviews. Please try again later.");
+        setErrorMessage("Failed to fetch reviews. Please try again later.");
         console.error("Error fetching reviews:", err);
       } finally {
-        setIsLoading(false);
+        stopLoading();
       }
     };
 

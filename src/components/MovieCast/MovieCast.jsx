@@ -2,17 +2,17 @@
 import { useParams } from "react-router-dom";
 import api from "../../API/api";
 import css from "./MovieCast.module.css";
+import useLoadingError from "../../hooks/useLoadingError";
 
 const MovieCast = () => {
   const { movieId } = useParams();
   const [cast, setCast] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { isLoading, error, startLoading, stopLoading, setErrorMessage, clearError } = useLoadingError();
 
   useEffect(() => {
     const fetchCast = async () => {
-      setIsLoading(true);
-      setError(null);
+      startLoading();
+      clearError();
       try {
         const response = await api.get(`/movie/${movieId}/credits`, {
           params: {
@@ -21,10 +21,10 @@ const MovieCast = () => {
         });
         setCast(response.data.cast);
       } catch (err) {
-        setError("Failed to fetch cast information. Please try again later.");
+        setErrorMessage("Failed to fetch cast information. Please try again later.");
         console.error("Error fetching cast:", err);
       } finally {
-        setIsLoading(false);
+        stopLoading();
       }
     };
 
