@@ -1,7 +1,7 @@
 ﻿import { Suspense } from "react";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useLocation, Link, Outlet } from "react-router-dom";
-import api from "../../API/api";
+import { fetchMovieDetails } from "../../API/apiServices";
 import css from "./MovieDetailsPage.module.css";
 
 const MovieDetailsPage = () => {
@@ -16,26 +16,21 @@ const MovieDetailsPage = () => {
   }, [location.state]);
 
   useEffect(() => {
-    const fetchMovieDetails = async () => {
+    const getMovieDetails = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/movie/${movieId}`, {
-          params: {
-            language: "en-US",
-          },
-        });
-        setMovieDetails(response.data);
+        const details = await fetchMovieDetails(movieId);
+        setMovieDetails(details);
       } catch (err) {
-        setError("Failed to fetch movie details. Please try again later.");
-        console.error("Error fetching movie details:", err);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (movieId) {
-      fetchMovieDetails();
+      getMovieDetails();
     }
   }, [movieId]);
 

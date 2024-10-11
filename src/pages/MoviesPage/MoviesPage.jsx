@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import api from "../../API/api";
+import { fetchMovies } from "../../API/apiServices";
 import MovieList from "../../components/MovieList/MovieList";
 import css from "./MoviesPage.module.css";
 
@@ -11,17 +11,15 @@ const MoviesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
 
-  const fetchMovies = useMemo(() => {
+  const searchMovies = useMemo(() => {
     return async (query) => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api.get("/search/movie", {
-          params: { query },
-        });
-        setMovies(response.data.results);
+        const results = await fetchMovies(query);
+        setMovies(results);
       } catch (error) {
-        setError("An error occurred while fetching movies. Please try again.");
+        setError(error.message);
       } finally {
         setIsLoading(false);
       }
@@ -30,8 +28,8 @@ const MoviesPage = () => {
 
   useEffect(() => {
     if (!query) return;
-    fetchMovies(query);
-  }, [query, fetchMovies]);
+    searchMovies(query);
+  }, [query, searchMovies]);
 
   const handleSubmit = (event) => {
     event.preventDefault();

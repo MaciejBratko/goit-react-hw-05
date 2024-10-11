@@ -1,8 +1,7 @@
 ﻿import { lazy, Suspense } from "react";
 import { useState, useEffect, useMemo } from "react";
 import css from "./HomePage.module.css";
-import api from "../../API/api";
-// import MovieList from "../../components/MovieList/MovieList";
+import { fetchPopularMovies } from "../../API/apiServices";
 
 const MovieList = lazy(() => import("../../components/MovieList/MovieList"));
 
@@ -12,25 +11,20 @@ const HomePage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPopularMovies = async () => {
+    const getPopularMovies = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await api.get("/trending/movie/day", {
-          params: {
-            language: "en-US",
-          },
-        });
-        setPopularMovies(response.data.results);
+        const movies = await fetchPopularMovies();
+        setPopularMovies(movies);
       } catch (err) {
-        setError("Failed to fetch popular movies. Please try again later.");
-        console.error("Error fetching popular movies:", err);
+        setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchPopularMovies();
+    getPopularMovies();
   }, []);
 
   const memoizedMovieList = useMemo(() => {
