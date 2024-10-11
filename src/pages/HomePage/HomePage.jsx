@@ -1,5 +1,5 @@
 ﻿import { lazy, Suspense } from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import css from "./HomePage.module.css";
 import { fetchPopularMovies } from "../../API/apiServices";
 
@@ -27,11 +27,9 @@ const HomePage = () => {
     getPopularMovies();
   }, []);
 
-  const memoizedMovieList = useMemo(() => {
-    return popularMovies.length > 0 ? (
-      <MovieList movies={popularMovies} />
-    ) : null;
-  }, [popularMovies]);
+  const movieList = popularMovies.length > 0 ? (
+    <MovieList movies={popularMovies} />
+  ) : null;
 
   return (
     <Suspense fallback={<div>Loading movies...</div>}>
@@ -39,7 +37,7 @@ const HomePage = () => {
         <h1 className={css.title}>Trending Movies</h1>
         {isLoading && <div className={css.loading}>Loading...</div>}
         {error && <div className={css.error}>{error}</div>}
-        {memoizedMovieList}
+        {movieList}
       </div>
     </Suspense>
   );

@@ -1,5 +1,5 @@
 ﻿import { Suspense } from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useLocation, Link, Outlet } from "react-router-dom";
 import { fetchMovieDetails } from "../../API/apiServices";
 import css from "./MovieDetailsPage.module.css";
@@ -11,9 +11,7 @@ const MovieDetailsPage = () => {
   const [error, setError] = useState(null);
   const location = useLocation();
 
-  const backLinkRef = useMemo(() => {
-    return location.state?.from ?? "/movies";
-  }, [location.state]);
+  const backLinkRef = location.state?.from ?? "/movies";
 
   useEffect(() => {
     const getMovieDetails = async () => {

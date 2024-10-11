@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetchMovies } from "../../API/apiServices";
 import MovieList from "../../components/MovieList/MovieList";
@@ -11,19 +11,17 @@ const MoviesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
 
-  const searchMovies = useMemo(() => {
-    return async (query) => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const results = await fetchMovies(query);
-        setMovies(results);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const searchMovies = useCallback(async (query) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const results = await fetchMovies(query);
+      setMovies(results);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -40,9 +38,7 @@ const MoviesPage = () => {
     }
   };
 
-  const memoizedMovieList = useMemo(() => {
-    return movies.length > 0 ? <MovieList movies={movies} /> : null;
-  }, [movies]);
+  const movieList = movies.length > 0 ? <MovieList movies={movies} /> : null;
 
   return (
     <div className={css.moviesPage}>
@@ -67,7 +63,7 @@ const MoviesPage = () => {
           No movies found. Try another search.
         </div>
       )}
-      {memoizedMovieList}
+      {movieList}
     </div>
   );
 };
