@@ -10,6 +10,7 @@ const MoviesPage = () => {
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get("query") || "";
+  const [sortCriteria, setSortCriteria] = useState("popularity");
 
   const searchMovies = useCallback(async (query) => {
     setIsLoading(true);
@@ -38,7 +39,26 @@ const MoviesPage = () => {
     }
   };
 
-  const movieList = movies.length > 0 ? <MovieList movies={movies} /> : null;
+  const handleSortChange = (event) => {
+    setSortCriteria(event.target.value);
+  };
+
+  const sortMovies = (moviesToSort) => {
+    return [...moviesToSort].sort((a, b) => {
+      switch (sortCriteria) {
+        case "popularity":
+          return b.popularity - a.popularity;
+        case "release_date":
+          return new Date(b.release_date) - new Date(a.release_date);
+        case "vote_average":
+          return b.vote_average - a.vote_average;
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const sortedMovies = sortMovies(movies);
 
   return (
     <div className={css.moviesPage}>
@@ -56,6 +76,22 @@ const MoviesPage = () => {
         </button>
       </form>
 
+      {movies.length > 0 && (
+        <div className={css.sortContainer}>
+          <label htmlFor="sortSelect">Sort by: </label>
+          <select
+            id="sortSelect"
+            value={sortCriteria}
+            onChange={handleSortChange}
+            className={css.sortSelect}
+          >
+            <option value="popularity">Popularity</option>
+            <option value="release_date">Release Date</option>
+            <option value="vote_average">Rating</option>
+          </select>
+        </div>
+      )}
+
       {isLoading && <div className={css.loader}>Loading...</div>}
       {error && <div className={css.error}>{error}</div>}
       {!isLoading && !error && movies.length === 0 && query && (
@@ -63,7 +99,7 @@ const MoviesPage = () => {
           No movies found. Try another search.
         </div>
       )}
-      {movieList}
+      {sortedMovies.length > 0 && <MovieList movies={sortedMovies} />}
     </div>
   );
 };
